@@ -7,6 +7,11 @@ function createUser(){
 
     $username = $_POST['username'];
     $password = $_POST['password'];
+
+    $username = mysqli_real_escape_string($connection, $username);
+    $password = mysqli_real_escape_string($connection,$password);
+
+    $password = password_hash($password,PASSWORD_DEFAULT);
   
     $query = "INSERT INTO users(username,password) VALUES('$username', '$password')";
     $result = mysqli_query($connection, $query);
