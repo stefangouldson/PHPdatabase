@@ -20,6 +20,9 @@ if (isset($_POST['submit'])) {
 </head>
 
 <body>
+
+<?php include './inc/nav.php'?>
+
 <div class="jumbotron">
     <div class="container">
         <div class="col-xs-6">

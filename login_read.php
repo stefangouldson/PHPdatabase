@@ -28,6 +28,9 @@
 </head>
 
 <body>
+
+<?php include './inc/nav.php'?>
+
     <div class="container">
         <div class="col-xs-6">
             <div class="jumbotron">
