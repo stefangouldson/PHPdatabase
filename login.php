@@ -2,6 +2,7 @@
 require("./db.php");
 require("./functions.php");
 
+
 if (isset($_POST['submit'])){
     createUser();
 }

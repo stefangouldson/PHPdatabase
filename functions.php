@@ -1,68 +1,76 @@
-<?php
-
-require("./db.php");
+<?php require("./db.php");
 
 function createUser(){
-    global $connection;
+    require("./db.php");
 
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $username = mysqli_real_escape_string($connection, $username);
-    $password = mysqli_real_escape_string($connection,$password);
+    //TODO up to date version of escape string
+    // // $username = mysqli_real_escape_string($connection, $username);
+    // //$password = mysqli_real_escape_string($connection,$password);
 
     $password = password_hash($password,PASSWORD_DEFAULT);
   
-    $query = "INSERT INTO users(username,password) VALUES('$username', '$password')";
-    $result = mysqli_query($connection, $query);
+    //*Old way
+    //// $query = "INSERT INTO users(username,password) VALUES('$username', '$password')";
+    //// $result = mysqli_query($connection, $query);
+
+    $stmt = $pdo->prepare('SELECT * from users WHERE username = ?');
+    $stmt->execute([$username]);
+    $totalUsers = $stmt->rowCount(); 
   
-     if (!$result){
-         die('Query Failed');
+     if ($totalUsers > 0){
+        die("Username taken, please enter another <br> <a href=login.php>go back</a><br>");
+        
+     } else {
+        $query = "INSERT INTO users(username,password) VALUES(?, ?)";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([$username, $password]);
+        echo "successfully added";
      }
 }
 
 function showAllData() {
 
-    global $connection;
+    require("./db.php");    
 
     $query = "SELECT * FROM users";
-    $result = mysqli_query($connection, $query);
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
+    $users = $stmt->fetchAll();
 
-    if (!$result) {
+    if (!$users) {
         die('Query Failed');
     }
 
-    while ($row = mysqli_fetch_assoc($result)) {
-        $id = $row['id'];
+    foreach($users as $user) {
+        $id = $user->id;
         echo "<option value='$id'>$id</option>";
     }
 }
 
 
 function updateTable() {
+    require("./db.php");
 
-    global $connection;
     $username = $_POST['username'];
     $password = $_POST['password'];
     $id = $_POST['id'];
 
-    $query = "UPDATE users SET username='$username',password='$password' WHERE id = $id;";
-    $res = mysqli_query($connection, $query);
-    if (!$res) {
-        die("Update Query Failed <br>" . mysqli_error($connection));
-    }
+    $password = password_hash($password,PASSWORD_DEFAULT);
+
+    $stmt = $pdo->prepare("UPDATE users SET username='$username',password='$password' WHERE id = $id;");
+    $stmt->execute();
 
 }
 
 function deleteRows() {
-    global $connection;
-
+    require('./db.php');
     $id = $_POST['id'];
 
     $query = "DELETE FROM users WHERE users.id = $id";
-    $res = mysqli_query($connection, $query);
-    if (!$res) {
-        die("Update Query Failed <br>" . mysqli_error($connection));
-    }
+    $stmt = $pdo->prepare($query);
+    $stmt->execute();
 
 }

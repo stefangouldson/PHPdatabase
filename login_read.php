@@ -2,13 +2,17 @@
     require("./db.php");
     require("./functions.php");
 
-    $query = "SELECT * FROM users";
+//     $query = "SELECT * FROM users";
 
-   $result = mysqli_query($connection, $query);
+//    $result = mysqli_query($connection, $query);
 
-   if (!$result){
-       die('Query Failed');
-   }
+//    if (!$result){
+//        die('Query Failed');
+//    }
+
+    $stmt = $pdo->prepare('SELECT * FROM users');
+    $stmt->execute();
+    $users = $stmt->fetchAll();
 
 ?>
 
@@ -26,19 +30,13 @@
 <body>
     <div class="container">
         <div class="col-xs-6">
-            
-        <?php 
-        
-        while ($row = mysqli_fetch_assoc($result)) {
-            ?>
-            <pre>
-            <?php
-            print_r($row);
-            ?>
-            </pre>
-            <?php
-        }
-        ?>
+            <div class="jumbotron">
+                <h2>This is a list of all the usernames</h2>
+            </div>
+        <ul>    
+            <?php foreach($users as $user){?>
+            <h4>Username: <?php echo $user->username;}?></h4>
+        </ul>
         </div>
     </div>
 </body>
